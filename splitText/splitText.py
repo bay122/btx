@@ -1,8 +1,8 @@
 import os 
+from bs4 import BeautifulSoup
+
 
 converted_filename = "html4.html"
-
-
 
 def crearTxt(nombre, content):
 	file2=open("./pages/"+nombre+".html", "a+") 
@@ -17,8 +17,14 @@ def extractText():
 	for line in contenido:
 		line = line.replace("&#160;", " ")
 		#print(line)
-		content += line
+		content += str(line)
 		if('</html>' in line):
+			print('parseando html')
+			#https://www.crummy.com/software/BeautifulSoup/bs4/doc/#attributes
+			tag = BeautifulSoup(content)
+			if(tag.name == 'p'):
+				tag['style'] = ''
+			content += str(tag.contents)
 			print(f"----------------------------CREANDO TXT {nro_pagina}----------------------")
 			crearTxt("pagina_"+str(nro_pagina), content)
 			content = ''
