@@ -1,5 +1,5 @@
 import os 
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 
 
 converted_filename = "html4.html"
@@ -21,16 +21,16 @@ def extractText():
 		if('</html>' in line):
 			print('parseando html')
 			#https://www.crummy.com/software/BeautifulSoup/bs4/doc/#attributes
-			tag = BeautifulSoup(content)
-			if(tag.name == 'p'):
-				tag['style'] = ''
-			content += str(tag.contents)
+			#tag = BeautifulSoup(content)
+			#if(tag.name == 'p'):
+			#	tag['style'] = ''
+			#content += str(tag.contents)
 			print(f"----------------------------CREANDO TXT {nro_pagina}----------------------")
 			crearTxt("pagina_"+str(nro_pagina), content)
 			content = ''
 			nro_pagina+=1
-			if(nro_pagina == 14):
-				exit()
+			#if(nro_pagina == 40):
+			#	exit()
 
 	file.close()
 
