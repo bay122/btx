@@ -4,7 +4,18 @@ import re
 
 
 def crearPdf(html_content, nombre='btx'):
-	pdfkit.from_string(html_content,nombre+'.pdf') 
+	options = {
+            'page-size': 'A5',
+            'margin-top': '0.75in',
+            'margin-right': '0.75in',
+            'margin-bottom': '0.75in',
+            'margin-left': '0.75in',
+            'encoding': "UTF-8",
+            'dpi': 150,
+            'quiet': '',
+            # 'print-media-type': '',
+        }
+	pdfkit.from_string(html_content,nombre+'.pdf', options=options)
 
 def crearTxt(nombre, content):
 	file2=open("./"+nombre+".html", "a+") 
@@ -66,7 +77,7 @@ def processPages(nro_pagina = 11):
 
 		##limpio estilo de div page
 		#https://linuxhint.com/python-beautifulsoup-tutorial-for-beginners/
-		soup.find_all("div")[0].attrs['style'] = "position:relative;width:711px;"
+		soup.find_all("div")[0].attrs['style'] = "position:relative;width:874px;height:1240px;"
 		
 		'''[Tipos de clase css]
 		Capitulo: 36px;
@@ -191,19 +202,31 @@ def processPages(nro_pagina = 11):
 		#crearPdf(soup.pret1tify())
 	else:
 		print("PAGINA DE CONTENIDO GENERAL")
+		print("corrigiendo ancho de archivo")
+		soup.find_all("div")[0].attrs['style'] = "position:relative;width:874px;height:1240px;page-break-after: always;"
+		print("Eliminando imagenes de fondo...")
+		imagenes = soup.find_all('img')
+		for img in imagenes:
+			img.extract()
+		print("Aplicando corrección de color de fondo...")
+		soup.body["bgcolor"] = "#fff"
 	#Tomar solo el div con clase page12-div y le quito el height
 	crearTxt("test", soup.prettify())
 	print("finalizado!")
 
 
 if __name__ == "__main__":
+	paginas_totales = 0
 	nro_pagina = 1
 	while(nro_pagina <= 979):
 		processPages(nro_pagina)
 		nro_pagina+=1
-	print("creando pdf...")
-	with open("test.html") as inf:
-		html_doc = inf.read()
-		crearPdf(html_doc)
+		paginas_totales+=1
+		if(paginas_totales==40):
+			print("creando pdf...")
+			with open("test.html") as inf:
+				html_doc = inf.read()
+				crearPdf(html_doc)
+			exit()
 
 #https://kite.com/python/examples/1742/beautifulsoup-find-the-next-element-after-a-tag
