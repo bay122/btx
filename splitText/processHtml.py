@@ -25,7 +25,7 @@ html_capitulos = '''
 </body>
 </html>
 '''
-
+template_capitulos = BeautifulSoup(html_capitulos, 'html.parser')
 
 def crearPdf(html_content, nombre='btx'):
 	#https://www.programcreek.com/python/example/100584/pdfkit.from_string
@@ -228,8 +228,9 @@ def processPages(nro_pagina = 11):
 			'''
 
 
-		#print(tag.prettify())
+		#print(tag.prettify(soup.))
 		print("\nHTML generado con exito!")
+		template_capitulos.insert(soup.find_all("div")[0])
 		#print(soup.prettify())
 		#print("creando pdf...")
 		#crearPdf(soup.pret1tify())
