@@ -2,8 +2,33 @@ from bs4 import BeautifulSoup
 import pdfkit
 import re
 
+html_capitulos = '''
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+<title></title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+ <br/>
+<style type="text/css">
+<!--
+	p {margin: 0; padding: 0; display: inline;}
+	.cap{font-size:36px;font-family:Times;color:#231f20;}
+	.cabecera{font-size:14px;font-family:Times;color:#231f20;}
+	.ver{font-size:13px;font-family:Times;color:#231f20;}
+	.desc{font-size:9px;font-family:Times;color:#231f20;}
+	.hidden {display: none}
+-->
+</style>
+</head>
+<body bgcolor="#fff" vlink="blue" link="blue">
+</body>
+</html>
+'''
+
 
 def crearPdf(html_content, nombre='btx'):
+	#https://www.programcreek.com/python/example/100584/pdfkit.from_string
 	options = {
             'page-size': 'A5',
             'margin-top': '0.75in',
@@ -87,10 +112,10 @@ def processPages(nro_pagina = 11):
 		descripcion: 9px;
 		'''
 
-		print("clases_capitulos: "+str(clases_capitulos))
-		print("clases_cabecera: "+str(clases_cabecera))
-		print("clases_versiculos: "+str(clases_versiculos))
-		print("clases_descripcion: "+str(clases_descripcion))
+		#print("clases_capitulos: "+str(clases_capitulos))
+		#print("clases_cabecera: "+str(clases_cabecera))
+		#print("clases_versiculos: "+str(clases_versiculos))
+		#print("clases_descripcion: "+str(clases_descripcion))
 
 		#if(len(clases_versiculos)>0):
 		#	print("Se detectaron las clases CSS de los versiculos!!")
@@ -100,20 +125,23 @@ def processPages(nro_pagina = 11):
 		#	styletag["type"] = "text/css"
 		#	styletag.string = f"<!-- {style_p} "+" { display: inline } -->"
 		#	soup.head.append(styletag)
-		styletag = soup.new_tag('style')
-		styletag["type"] = "text/css"
-		print("\nAplicando corrección de estilo a los parrafos...")
-		styletag.string = "<!-- p { display: inline } .hidden {display: none} -->"
-		soup.head.append(styletag)
+		
+		#SE REEMPLAZA POR PLANTILLA
+		#styletag = soup.new_tag('style')
+		#styletag["type"] = "text/css"
+		#print("\nAplicando corrección de estilo a los parrafos...")
+		#styletag.string = "<!-- p { display: inline } .hidden {display: none} -->"
+		#soup.head.append(styletag)
 
+		#SE REEMPLAZA POR PLANTILLA
+		#print("Eliminando imagenes de fondo...")
+		#imagenes = soup.find_all('img')
+		#for img in imagenes:
+		#	img.extract()
 
-		print("Eliminando imagenes de fondo...")
-		imagenes = soup.find_all('img')
-		for img in imagenes:
-			img.extract()
-
-		print("Aplicando corrección de color de fondo...")
-		soup.body["bgcolor"] = "#fff"
+		#SE REEMPLAZA POR PLANTILLA
+		#print("Aplicando corrección de color de fondo...")
+		#soup.body["bgcolor"] = "#fff"
 
 		print("Limpiando estilo de versiculos\n")
 		textos = soup.find_all('p')
@@ -138,7 +166,7 @@ def processPages(nro_pagina = 11):
 			bo_es_versiculo =  any(elem in tag["class"]  for elem in clases_versiculos)
 			bo_es_descripcion =  any(elem in tag["class"]  for elem in clases_descripcion)
 			if(bo_es_capitulo):
-				pass
+				tag['class'] = ['cap']
 				#print("Capitulo detectado!")
 				#print("Agregando salto de linea...\n")
 				#br_tag = soup.new_tag("br")
@@ -153,13 +181,16 @@ def processPages(nro_pagina = 11):
 				print("Cabecera detectado!")
 				print("ocultando linea...\n")
 				#https://codereview.stackexchange.com/a/41426
-				tag['class'] = tag.get('class', []) + ['hidden']
+				#tag['class'] = tag.get('class', []) + ['hidden']
+				tag['class'] = ['cabecera', 'hidden']
+
 				##print("Agregando salto de linea...\n")
 				##br_tag = soup.new_tag("br")
 				##br_tag2 = soup.new_tag("br")
 				##tag.insert_after(br_tag)
 				##tag.insert_after(br_tag2)
 			elif(bo_es_versiculo):
+				tag['class'] = ['ver']
 				arr_next_element = tag.find_next_siblings('p')#tag.next_element.next_element
 				next_element = arr_next_element[0] if (len(arr_next_element)>0) else None
 				if(next_element):
@@ -179,6 +210,8 @@ def processPages(nro_pagina = 11):
 						br_tag2 = soup.new_tag("br")
 						tag.insert_after(br_tag)
 						tag.insert_after(br_tag2)
+			elif(bo_es_descripcion):
+				tag['class'] = ['desc']
 			'''if((not bo_es_versiculo) and bo_agregar_salto_linea):
 				print("Añadiendo salto de linea...")
 				# create a new tag
